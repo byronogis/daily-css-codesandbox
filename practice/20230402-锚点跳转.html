@@ -4,9 +4,75 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>20230402-锚点跳转</title>
+  <style>
+    header {
+      position: fixed;
+      z-index: 1;
+      top: 0px;
+      left: 0px;
+      right: 0px;
+      margin: auto;
+      height: 100px;
+      background-color: #3c3c3c75;
+      text-align: center;
+      line-height: 100px;
+      font-size: 3em;
+      color: #fff;
+    }
+    .anchor-box {
+      position: fixed;
+      z-index: 1;
+      top: 150px;
+      right: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: enter;
+      align-items: flex-start;
+      padding: 2em;
+      background-color: #ccc;
+      box-shadow: 1px 1px 5px #000;
+    }
+    .placeholder {
+      height: 200vh;
+    }
+  </style>
 </head>
 <body>
-  
+  <header>这里是一个固定在顶部的header</header>
+  <div class="anchor-box">
+    <a href="#会被header遮挡的标题">跳转到: 会被header遮挡的标题</a>
+    <a class="handle" href="#避免被header遮挡的标题">跳转到: 避免被header遮挡的标题</a>
+  </div>
+  <section class="placeholder"></section>
+  <main>
+    <h2 id="会被header遮挡的标题">会被header遮挡的标题</h2>
+    <h2 id="避免被header遮挡的标题">避免被header遮挡的标题</h2>
+  </main>
+  <section class="placeholder"></section>
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      if (!anchor.classList.contains('handle')) {
+        return
+      }
+      
+      anchor.addEventListener('click', event => {
+        event.preventDefault()
+        try {
+          // 解码这一步会有失败的可能, 这里使用 try catch 进行捕获
+          const hash = decodeURIComponent(event.target.hash)
+          const target = document.querySelector(hash)
+          window.scrollTo({
+            top: target.offsetTop - 100,
+            behavior: 'smooth',
+          })
+          history.pushState(null, null, event.target.hash)
+        } catch (error) {
+          console.error(error)
+        }
+      })
+    })
+  </script>
 </body>
 </html>
